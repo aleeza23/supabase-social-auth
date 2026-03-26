@@ -15,6 +15,8 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import SocialAuthButtons from "./social-auth-buttons";
+import Separator from "./seprator";
 
 export function LoginForm({
   className,
@@ -84,6 +86,7 @@ export function LoginForm({
                   id="password"
                   type="password"
                   required
+                  placeholder="*********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -103,6 +106,8 @@ export function LoginForm({
               </Link>
             </div>
           </form>
+          <Separator />
+          <SocialAuthButtons />
         </CardContent>
       </Card>
     </div>
