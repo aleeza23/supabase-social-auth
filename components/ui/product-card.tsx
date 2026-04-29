@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { Pencil, Trash2, ArrowUpRight } from "lucide-react";
 
 export type Product = {
   id: number;
@@ -7,39 +11,79 @@ export type Product = {
   image?: string;
 };
 
-export default function ProductCard({ product }: { product: Product }) {
+type Props = {
+  product: Product;
+  onEdit?: (product: Product) => void;
+  onDelete?: (id: number) => void;
+};
+
+export default function ProductCard({ product, onEdit, onDelete }: Props) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-      
+    <div className="group relative flex flex-col overflow-hidden rounded-3xl bg-[#0e0e11] border border-white/[0.06] shadow-xl transition-all duration-500 hover:border-amber-400/30 hover:shadow-amber-500/10 hover:shadow-2xl hover:-translate-y-1">
+
       {/* Image */}
-      <div className="relative h-48 w-full overflow-hidden">
+      <Link href={`/products/${product.id}`} className="block relative h-52 w-full overflow-hidden">
         {product.image ? (
           <Image
             src={product.image}
             alt={product.product_title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 text-gray-400 text-sm">
-            No Image
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#16213e]">
+            <span className="text-4xl opacity-20">◈</span>
           </div>
         )}
-      </div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent" />
+
+        {/* Arrow icon top right */}
+        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-1 group-hover:translate-x-0">
+          <div className="bg-amber-400 text-black rounded-full p-1.5">
+            <ArrowUpRight size={14} strokeWidth={2.5} />
+          </div>
+        </div>
+      </Link>
 
       {/* Content */}
-      <div className="p-4 space-y-2">
-        <h3 className="text-lg font-semibold transition-colors duration-300 text-indigo-400">
-          {product.product_title}
-        </h3>
+      <div className="flex flex-col flex-1 p-5 gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <Link href={`/products/${product.id}`}>
+            <h3 className="font-bold text-base text-white tracking-tight leading-snug hover:text-amber-400 transition-colors line-clamp-1"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+              {product.product_title}
+            </h3>
+          </Link>
+        </div>
 
-        <p className="text-sm text-gray-400 line-clamp-2">
+        <p className="text-sm text-white/40 line-clamp-2 leading-relaxed flex-1">
           {product.description}
         </p>
-      </div>
 
-      <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 blur-xl" />
+        {/* Actions */}
+        {(onEdit || onDelete) && (
+          <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
+            {onEdit && (
+              <button
+                onClick={() => onEdit(product)}
+                className="flex items-center gap-1.5 text-xs text-white/40 hover:text-amber-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-amber-400/10"
+              >
+                <Pencil size={12} />
+                Edit
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={() => onDelete(product.id)}
+                className="flex items-center gap-1.5 text-xs text-white/40 hover:text-rose-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-rose-400/10 ml-auto"
+              >
+                <Trash2 size={12} />
+                Delete
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
