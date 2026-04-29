@@ -31,7 +31,6 @@ export async function PUT(req: Request, { params }: Params) {
   const supabase = await createClient();
   const body = await req.json();
 
-  // Strip id from body just in case it leaked in
   const { id: _drop, ...cleanBody } = body;
 
   console.log("Updating id:", numericId, "with:", cleanBody); // ← debug log
