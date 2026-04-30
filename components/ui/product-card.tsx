@@ -20,9 +20,11 @@ type Props = {
 export default function ProductCard({ product, onEdit, onDelete }: Props) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-3xl bg-[#0e0e11] border border-white/[0.06] shadow-xl transition-all duration-500 hover:border-amber-400/30 hover:shadow-amber-500/10 hover:shadow-2xl hover:-translate-y-1">
-
       {/* Image */}
-      <Link href={`/products/${product.id}`} className="block relative h-52 w-full overflow-hidden">
+      <Link
+        href={`/products/${product.id}`}
+        className="block relative h-52 w-full overflow-hidden"
+      >
         {product.image ? (
           <Image
             src={product.image}
@@ -50,8 +52,10 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
       <div className="flex flex-col flex-1 p-5 gap-3">
         <div className="flex items-start justify-between gap-2">
           <Link href={`/products/${product.id}`}>
-            <h3 className="font-bold text-base text-white tracking-tight leading-snug hover:text-amber-400 transition-colors line-clamp-1"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            <h3
+              className="font-bold text-base text-white tracking-tight leading-snug hover:text-amber-400 transition-colors line-clamp-1"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
               {product.product_title}
             </h3>
           </Link>
@@ -60,30 +64,6 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
         <p className="text-sm text-white/40 line-clamp-2 leading-relaxed flex-1">
           {product.description}
         </p>
-
-        {/* Actions */}
-        {(onEdit || onDelete) && (
-          <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
-            {onEdit && (
-              <button
-                onClick={() => onEdit(product)}
-                className="flex items-center gap-1.5 text-xs text-white/40 hover:text-amber-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-amber-400/10"
-              >
-                <Pencil size={12} />
-                Edit
-              </button>
-            )}
-            {onDelete && (
-              <button
-                onClick={() => onDelete(product.id)}
-                className="flex items-center gap-1.5 text-xs text-white/40 hover:text-rose-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-rose-400/10 ml-auto"
-              >
-                <Trash2 size={12} />
-                Delete
-              </button>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

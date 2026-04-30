@@ -70,3 +70,6 @@ export async function DELETE(_: Request, { params }: Params) {
   }
   return NextResponse.json({ success: true });
 }
+
+
+//    [browser] ⨯ unhandledRejection: Error: Cannot coerce the result to a single JSON object at fetcher (lib/hooks/use-products.ts:9:11)      7 |   if (!res.ok) {   8 |     const err = await res.json().catch((...>  9 |     throw new Error(err.error ?? `Reques...  11 |   return res.json();
