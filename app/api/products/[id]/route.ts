@@ -33,7 +33,7 @@ export async function PUT(req: Request, { params }: Params) {
 
   const { id: _drop, ...cleanBody } = body;
 
-  console.log("Updating id:", numericId, "with:", cleanBody); // ← debug log
+  console.log("Updating id:", numericId, "with:", cleanBody); 
 
   const { data, error } = await supabase
     .from("products")
@@ -51,6 +51,7 @@ export async function PUT(req: Request, { params }: Params) {
 
 export async function DELETE(_: Request, { params }: Params) {
   const { id } = await params;
+
   const numericId = parseInt(id, 10);
 
   if (isNaN(numericId)) {
@@ -59,17 +60,36 @@ export async function DELETE(_: Request, { params }: Params) {
 
   const supabase = await createClient();
 
+  // 1. Get product first
+  const { data: product, error: fetchError } = await supabase
+    .from("products")
+    .select("image")
+    .eq("id", numericId)
+    .maybeSingle();
+
+  if (fetchError) {
+    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+  }
+
+  // 2. Delete image from storage
+  if (product?.image) {
+    const fileName = product.image.split("/").pop();
+
+    if (fileName) {
+      await supabase.storage.from("product_images").remove([fileName]);
+    }
+  }
+
   const { error } = await supabase
     .from("products")
     .delete()
     .eq("id", numericId);
 
   if (error) {
-    console.error("DELETE Supabase error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ success: true });
+
+  return NextResponse.json({
+    success: true,
+  });
 }
-
-
-//    [browser] ⨯ unhandledRejection: Error: Cannot coerce the result to a single JSON object at fetcher (lib/hooks/use-products.ts:9:11)      7 |   if (!res.ok) {   8 |     const err = await res.json().catch((...>  9 |     throw new Error(err.error ?? `Reques...  11 |   return res.json();
