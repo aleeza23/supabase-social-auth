@@ -8,10 +8,7 @@ export async function POST(req: Request) {
     const file = formData.get("file") as File;
 
     if (!file) {
-      return NextResponse.json(
-        { error: "No file uploaded" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
     const supabase = await createClient();
@@ -28,10 +25,7 @@ export async function POST(req: Request) {
       });
 
     if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     const { data } = supabase.storage
@@ -44,9 +38,6 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error(err);
 
-    return NextResponse.json(
-      { error: "Upload failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

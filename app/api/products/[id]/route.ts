@@ -33,7 +33,7 @@ export async function PUT(req: Request, { params }: Params) {
 
   const { id: _drop, ...cleanBody } = body;
 
-  console.log("Updating id:", numericId, "with:", cleanBody); 
+  console.log("Updating id:", numericId, "with:", cleanBody);
 
   const { data, error } = await supabase
     .from("products")
