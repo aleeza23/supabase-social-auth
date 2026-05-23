@@ -1,159 +1,198 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Pencil, Plus, Trash2, Users } from "lucide-react";
+import { log } from "node:console";
 
-type Profile = {
+type Crew = {
   id: string;
   email: string;
-  role: "user" | "crew" | "admin";
+  name: string;
+  role: string;
 };
 
-export default function CrewManagement() {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+export default function ManageCrewPage() {
+  const [crew, setCrew] = useState<Crew[]>([]);
   const [loading, setLoading] = useState(true);
-console.log(profiles);
+
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const fetchCrew = async () => {
+    setLoading(true);
+
+    const res = await fetch("/api/admin/crew");
+    const data = await res.json();
+
+    setCrew(data || []);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    fetchProfiles();
+    fetchCrew();
   }, []);
 
-  const fetchProfiles = async () => {
-    try {
-      const res = await fetch("/api/admin/users");
-      const data = await res.json();
+  const createCrew = async () => {
+    const res = await fetch("/api/admin/crew", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
 
-      if (res.ok) {
-        setProfiles(data);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log(res, 'create res');
+    
 
-  const updateRole = async (
-    userId: string,
-    role: "user" | "crew" | "admin",
-  ) => {
-    try {
-      const res = await fetch(`/api/admin/users/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role }),
+    if (res.ok) {
+      setForm({
+        email: "",
+        password: "",
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to update role");
-      }
-
-      setProfiles((prev) =>
-        prev.map((profile) =>
-          profile.id === userId
-            ? { ...profile, role }
-            : profile,
-        ),
-      );
-    } catch (err) {
-      console.error(err);
+      fetchCrew();
     }
   };
 
-  if (loading) {
-    return (
-      <div className="text-white p-10">
-        Loading...
-      </div>
-    );
-  }
+  const deleteCrew = async (id: string) => {
+    await fetch(`/api/admin/crew/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchCrew();
+  };
 
   return (
-    <div className="min-h-screen bg-black p-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">
-            Crew Management
-          </h1>
-
-          <p className="text-white/50 mt-2">
-            Manage user roles and crew access
+    <div
+      className="min-h-screen bg-[#080809] text-white p-6 md:p-10"
+      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <p
+            className="text-xs text-amber-400/60 tracking-[0.3em] uppercase mb-1"
+            style={{ fontFamily: "system-ui" }}
+          >
+            Admin
           </p>
+
+          <h1 className="text-3xl font-bold">
+            Manage Crew
+          </h1>
         </div>
 
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-          <div className="grid grid-cols-12 border-b border-white/10 px-6 py-4 text-sm uppercase tracking-wider text-white/40">
-            <div className="col-span-5">
-              Email
-            </div>
-
-            <div className="col-span-3">
-              Current Role
-            </div>
-
-            <div className="col-span-4">
-              Change Role
-            </div>
-          </div>
-
-          <div className="divide-y divide-white/10">
-            {profiles.map((profile) => (
-              <div
-                key={profile.id}
-                className="grid grid-cols-12 items-center px-6 py-5"
-              >
-                <div className="col-span-5">
-                  <p className="text-white font-medium">
-                    {profile.email}
-                  </p>
-                </div>
-
-                <div className="col-span-3">
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-                      profile.role === "admin"
-                        ? "bg-red-500/20 text-red-300"
-                        : profile.role === "crew"
-                        ? "bg-blue-500/20 text-blue-300"
-                        : "bg-white/10 text-white/60"
-                    }`}
-                  >
-                    {profile.role}
-                  </span>
-                </div>
-
-                <div className="col-span-4">
-                  <select
-                    value={profile.role}
-                    onChange={(e) =>
-                      updateRole(
-                        profile.id,
-                        e.target.value as
-                          | "user"
-                          | "crew"
-                          | "admin",
-                      )
-                    }
-                    className="w-full rounded-xl border border-white/10 bg-black px-4 py-2 text-white outline-none focus:border-amber-400"
-                  >
-                    <option value="user">
-                      User
-                    </option>
-
-                    <option value="crew">
-                      Crew
-                    </option>
-
-                    <option value="admin">
-                      Admin
-                    </option>
-                  </select>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center gap-2 text-amber-400">
+          <Users size={20} />
+          <span>{crew.length} Crew Members</span>
         </div>
+      </div>
+
+      {/* Create Crew */}
+      <div className="rounded-2xl bg-[#0e0e11] border border-white/[0.06] p-6 mb-8">
+        <h2 className="text-lg font-semibold mb-5">
+          Add Crew Member
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-4">
+
+          <input
+            placeholder="Email"
+            value={form.email}
+            onChange={(e) =>
+              setForm({ ...form, email: e.target.value })
+            }
+            className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none"
+          />
+
+          <input
+            placeholder="Password"
+            type="password"
+            value={form.password}
+            onChange={(e) =>
+              setForm({ ...form, password: e.target.value })
+            }
+            className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none"
+          />
+        </div>
+
+        <button
+          onClick={createCrew}
+          className="mt-5 flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-black text-sm font-semibold px-5 py-3 rounded-xl transition-colors"
+          style={{ fontFamily: "system-ui" }}
+        >
+          <Plus size={16} />
+          Add Crew
+        </button>
+      </div>
+
+      {/* Crew Table */}
+      <div className="rounded-2xl bg-[#0e0e11] border border-white/[0.06] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.06]">
+          <h2 className="text-base font-semibold">
+            Crew Members
+          </h2>
+        </div>
+
+        {loading ? (
+          <div className="h-40 flex items-center justify-center text-white/20">
+            Loading...
+          </div>
+        ) : (
+          <table
+            className="w-full"
+            style={{ fontFamily: "system-ui" }}
+          >
+            <thead>
+              <tr className="text-left text-xs text-white/20 uppercase tracking-widest border-b border-white/[0.06]">
+                <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3">Role</th>
+                <th className="px-6 py-3 text-right">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {crew.map((member) => (
+                <tr
+                  key={member.id}
+                  className="border-b border-white/[0.04]"
+                >
+
+                  <td className="px-6 py-4 text-white/50">
+                    {member.email}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <span className="bg-amber-400/10 text-amber-400 px-3 py-1 rounded-full text-xs">
+                      {member.role}
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <button className="p-2 rounded-lg text-white/30 hover:text-amber-400 hover:bg-amber-400/10 transition-all">
+                        <Pencil size={14} />
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          deleteCrew(member.id)
+                        }
+                        className="p-2 rounded-lg text-white/30 hover:text-rose-400 hover:bg-rose-400/10 transition-all"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
