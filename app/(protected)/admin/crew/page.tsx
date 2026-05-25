@@ -43,8 +43,7 @@ export default function ManageCrewPage() {
       body: JSON.stringify(form),
     });
 
-    console.log(res, 'create res');
-    
+    console.log(res, "create res");
 
     if (res.ok) {
       setForm({
@@ -79,9 +78,7 @@ export default function ManageCrewPage() {
             Admin
           </p>
 
-          <h1 className="text-3xl font-bold">
-            Manage Crew
-          </h1>
+          <h1 className="text-3xl font-bold">Manage Crew</h1>
         </div>
 
         <div className="flex items-center gap-2 text-amber-400">
@@ -92,18 +89,13 @@ export default function ManageCrewPage() {
 
       {/* Create Crew */}
       <div className="rounded-2xl bg-[#0e0e11] border border-white/[0.06] p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-5">
-          Add Crew Member
-        </h2>
+        <h2 className="text-lg font-semibold mb-5">Add Crew Member</h2>
 
         <div className="grid md:grid-cols-3 gap-4">
-
           <input
             placeholder="Email"
             value={form.email}
-            onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
             className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none"
           />
 
@@ -111,9 +103,7 @@ export default function ManageCrewPage() {
             placeholder="Password"
             type="password"
             value={form.password}
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
             className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none"
           />
         </div>
@@ -131,9 +121,7 @@ export default function ManageCrewPage() {
       {/* Crew Table */}
       <div className="rounded-2xl bg-[#0e0e11] border border-white/[0.06] overflow-hidden">
         <div className="px-6 py-4 border-b border-white/[0.06]">
-          <h2 className="text-base font-semibold">
-            Crew Members
-          </h2>
+          <h2 className="text-base font-semibold">Crew Members</h2>
         </div>
 
         {loading ? (
@@ -141,30 +129,19 @@ export default function ManageCrewPage() {
             Loading...
           </div>
         ) : (
-          <table
-            className="w-full"
-            style={{ fontFamily: "system-ui" }}
-          >
+          <table className="w-full" style={{ fontFamily: "system-ui" }}>
             <thead>
               <tr className="text-left text-xs text-white/20 uppercase tracking-widest border-b border-white/[0.06]">
                 <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Role</th>
-                <th className="px-6 py-3 text-right">
-                  Actions
-                </th>
+                <th className="px-6 py-3 text-right">Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {crew.map((member) => (
-                <tr
-                  key={member.id}
-                  className="border-b border-white/[0.04]"
-                >
-
-                  <td className="px-6 py-4 text-white/50">
-                    {member.email}
-                  </td>
+                <tr key={member.id} className="border-b border-white/[0.04]">
+                  <td className="px-6 py-4 text-white/50">{member.email}</td>
 
                   <td className="px-6 py-4">
                     <span className="bg-amber-400/10 text-amber-400 px-3 py-1 rounded-full text-xs">
@@ -179,9 +156,7 @@ export default function ManageCrewPage() {
                       </button>
 
                       <button
-                        onClick={() =>
-                          deleteCrew(member.id)
-                        }
+                        onClick={() => deleteCrew(member.id)}
                         className="p-2 rounded-lg text-white/30 hover:text-rose-400 hover:bg-rose-400/10 transition-all"
                       >
                         <Trash2 size={14} />

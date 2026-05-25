@@ -30,18 +30,46 @@ export function LoginForm({
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const supabase = createClient();
+
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // LOGIN
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/admin/dashboard");
+
+      const user = data.user;
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // GET ROLE
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      // REDIRECT BASED ON ROLE
+      if (profile?.role === "admin") {
+        router.push("/admin/dashboard");
+      } else if (profile?.role === "crew") {
+        router.push("/crew/dashboard");
+      } else {
+        router.push("/");
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
