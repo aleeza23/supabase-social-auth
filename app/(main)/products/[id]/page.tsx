@@ -6,10 +6,13 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
 import { useProduct, useProducts } from "@/lib/hooks/use-products";
 import Link from "next/link";
+import { useAddToCart } from "@/lib/hooks/use-cart";
 
 export default function ProductPage() {
   const { id } = useParams();
   const router = useRouter();
+  const addToCart = useAddToCart();
+
   const { data: product, isLoading } = useProduct(Number(id));
   const { data: all = [] } = useProducts();
   const [slide, setSlide] = useState(0);
@@ -18,21 +21,25 @@ export default function ProductPage() {
   const prev = () => setSlide((s) => (s - 1 + related.length) % related.length);
   const next = () => setSlide((s) => (s + 1) % related.length);
 
-  if (isLoading) return (
-    <div className="min-h-screen bg-[#080809] flex items-center justify-center text-white/20 tracking-widest text-sm uppercase">
-      Loading…
-    </div>
-  );
+  if (isLoading)
+    return (
+      <div className="min-h-screen bg-[#080809] flex items-center justify-center text-white/20 tracking-widest text-sm uppercase">
+        Loading…
+      </div>
+    );
 
-  if (!product) return (
-    <div className="min-h-screen bg-[#080809] flex items-center justify-center text-white/40">
-      Product not found
-    </div>
-  );
+  if (!product)
+    return (
+      <div className="min-h-screen bg-[#080809] flex items-center justify-center text-white/40">
+        Product not found
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-[#080809] text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-
+    <div
+      className="min-h-screen bg-[#080809] text-white"
+      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+    >
       {/* Back */}
       <div className="max-w-6xl mx-auto px-6 pt-8">
         <button
@@ -50,7 +57,12 @@ export default function ProductPage() {
         {/* Image */}
         <div className="relative aspect-square rounded-3xl overflow-hidden border border-white/[0.07] shadow-2xl shadow-black/60">
           {product.image ? (
-            <Image src={product.image} alt={product.product_title} fill className="object-cover" />
+            <Image
+              src={product.image}
+              alt={product.product_title}
+              fill
+              className="object-cover"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#0d0d1a]">
               <span className="text-7xl opacity-10">◈</span>
@@ -63,8 +75,10 @@ export default function ProductPage() {
         {/* Info */}
         <div className="flex flex-col gap-6">
           <div>
-            <p className="text-amber-400/60 text-xs tracking-[0.3em] uppercase mb-3"
-              style={{ fontFamily: "system-ui" }}>
+            <p
+              className="text-amber-400/60 text-xs tracking-[0.3em] uppercase mb-3"
+              style={{ fontFamily: "system-ui" }}
+            >
               Product Details
             </p>
             <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
@@ -74,14 +88,29 @@ export default function ProductPage() {
 
           <div className="w-12 h-px bg-amber-400/40" />
 
-          <p className="text-white/50 leading-relaxed text-base" style={{ fontFamily: "system-ui" }}>
+          <p
+            className="text-white/50 leading-relaxed text-base"
+            style={{ fontFamily: "system-ui" }}
+          >
             {product.description}
           </p>
 
           <div className="flex gap-3 pt-4">
+            <button
+              onClick={() =>
+                addToCart.mutate({
+                  product_id: product.id,
+                })
+              }
+              className="px-6 py-3 rounded-xl bg-amber-400 text-black text-sm font-semibold hover:bg-amber-300 transition-colors"
+              style={{ fontFamily: "system-ui" }}
+            >
+              Add To Cart
+            </button>
+
             <Link
               href="/"
-              className="px-6 py-3 rounded-xl bg-amber-400 text-black text-sm font-semibold hover:bg-amber-300 transition-colors"
+              className="px-6 py-3 rounded-xl border border-white/10 text-white text-sm font-semibold hover:border-amber-400/30 transition-colors"
               style={{ fontFamily: "system-ui" }}
             >
               Browse All
@@ -115,7 +144,9 @@ export default function ProductPage() {
           <div className="overflow-hidden">
             <div
               className="flex gap-5 transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(calc(-${slide * (100 / 3)}% - ${slide * (20 / 3)}px))` }}
+              style={{
+                transform: `translateX(calc(-${slide * (100 / 3)}% - ${slide * (20 / 3)}px))`,
+              }}
             >
               {related.map((p) => (
                 <Link
@@ -125,7 +156,12 @@ export default function ProductPage() {
                 >
                   <div className="relative h-40 overflow-hidden">
                     {p.image ? (
-                      <Image src={p.image} alt={p.product_title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <Image
+                        src={p.image}
+                        alt={p.product_title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#0d0d1a]">
                         <span className="text-3xl opacity-10">◈</span>
@@ -137,7 +173,10 @@ export default function ProductPage() {
                     <h3 className="text-sm font-semibold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
                       {p.product_title}
                     </h3>
-                    <p className="text-xs text-white/30 mt-1 line-clamp-1" style={{ fontFamily: "system-ui" }}>
+                    <p
+                      className="text-xs text-white/30 mt-1 line-clamp-1"
+                      style={{ fontFamily: "system-ui" }}
+                    >
                       {p.description}
                     </p>
                   </div>
