@@ -47,19 +47,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
+  const { product_id, quantity = 1 } = await req.json();
 
-  const { product_id, quantity = 1 } = body;
+  // FORCE matching type (important fix)
+  const pid = Number(product_id);
 
-  // Check existing cart item
   const { data: existingItem } = await supabase
     .from("cart")
     .select("*")
     .eq("user_id", user.id)
-    .eq("product_id", product_id)
+    .eq("product_id", pid)
     .maybeSingle();
 
-  // Update quantity if exists
   if (existingItem) {
     const { data, error } = await supabase
       .from("cart")
@@ -77,13 +76,12 @@ export async function POST(req: Request) {
     return NextResponse.json(data);
   }
 
-  // Insert new item
   const { data, error } = await supabase
     .from("cart")
     .insert([
       {
         user_id: user.id,
-        product_id,
+        product_id: pid,
         quantity,
       },
     ])
@@ -94,7 +92,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data, {
-    status: 201,
-  });
+  return NextResponse.json(data, { status: 201 });
 }

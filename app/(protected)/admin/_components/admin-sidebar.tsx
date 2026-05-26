@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Settings,
   Users,
+  Package2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -23,14 +24,9 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
-    label: "Products",
-    href: "/admin/products",
-    icon: Package,
-  },
-  {
-    label: "Crew",
-    href: "/admin/crew",
-    icon: Users,
+    label: "Categories",
+    href: "/admin/categories",
+    icon: Package2,
   },
   {
     label: "Settings",
