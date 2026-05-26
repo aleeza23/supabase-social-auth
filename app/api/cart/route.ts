@@ -25,15 +25,12 @@ export async function GET() {
         description,
         image
       )
-    `
+    `,
     )
     .eq("user_id", user.id);
 
   if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   return NextResponse.json(data);
@@ -47,46 +44,40 @@ export async function POST(req: Request) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await req.json();
 
   const { product_id, quantity = 1 } = body;
 
-  // Check existing item
-  const { data: existing } = await supabase
+  // Check existing cart item
+  const { data: existingItem } = await supabase
     .from("cart")
     .select("*")
     .eq("user_id", user.id)
     .eq("product_id", product_id)
-    .single();
+    .maybeSingle();
 
-  // If exists increase quantity
-  if (existing) {
+  // Update quantity if exists
+  if (existingItem) {
     const { data, error } = await supabase
       .from("cart")
       .update({
-        quantity: existing.quantity + quantity,
+        quantity: existingItem.quantity + quantity,
       })
-      .eq("id", existing.id)
+      .eq("id", existingItem.id)
       .select()
       .single();
 
     if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json(data);
   }
 
-  // Create new
+  // Insert new item
   const { data, error } = await supabase
     .from("cart")
     .insert([
@@ -100,11 +91,10 @@ export async function POST(req: Request) {
     .single();
 
   if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data, { status: 201 });
+  return NextResponse.json(data, {
+    status: 201,
+  });
 }

@@ -7,12 +7,13 @@ import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
 import { useProduct, useProducts } from "@/lib/hooks/use-products";
 import Link from "next/link";
 import { useAddToCart } from "@/lib/hooks/use-cart";
+import { useUser } from "@/lib/hooks/use-user";
 
 export default function ProductPage() {
   const { id } = useParams();
   const router = useRouter();
   const addToCart = useAddToCart();
-
+  const { user, isAuthenticated } = useUser();
   const { data: product, isLoading } = useProduct(Number(id));
   const { data: all = [] } = useProducts();
   const [slide, setSlide] = useState(0);
@@ -20,6 +21,19 @@ export default function ProductPage() {
   const related = all.filter((p) => p.id !== Number(id));
   const prev = () => setSlide((s) => (s - 1 + related.length) % related.length);
   const next = () => setSlide((s) => (s + 1) % related.length);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+      return;
+    }
+
+    addToCart.mutate({
+      product_id: product.id,
+    });
+  };
 
   if (isLoading)
     return (
@@ -97,15 +111,12 @@ export default function ProductPage() {
 
           <div className="flex gap-3 pt-4">
             <button
-              onClick={() =>
-                addToCart.mutate({
-                  product_id: product.id,
-                })
-              }
-              className="px-6 py-3 rounded-xl bg-amber-400 text-black text-sm font-semibold hover:bg-amber-300 transition-colors"
+              onClick={handleAddToCart}
+              disabled={addToCart.isPending}
+              className="px-6 py-3 rounded-xl bg-amber-400 text-black text-sm font-semibold hover:bg-amber-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ fontFamily: "system-ui" }}
             >
-              Add To Cart
+              {addToCart.isPending ? "Adding..." : "Add To Cart"}
             </button>
 
             <Link
