@@ -23,7 +23,8 @@ export async function GET() {
         id,
         product_title,
         description,
-        image
+        image,
+        price
       )
     `,
     )

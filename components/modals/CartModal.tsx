@@ -9,29 +9,23 @@ type Props = {
   onClose: () => void;
 };
 
-export default function CartDrawer({
-  open,
-  onClose,
-}: Props) {
-  const { data: cart = [], isLoading } =
-    useCart();
+export default function CartDrawer({ open, onClose }: Props) {
+  const { data: cart = [], isLoading } = useCart();
 
-  const { mutate: removeItem } =
-    useRemoveFromCart();
+  const { mutate: removeItem } = useRemoveFromCart();
 
   if (!open) return null;
 
-  const totalItems = cart.reduce(
-    (sum, item) => sum + item.quantity,
-    0
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.quantity * item.products.price,
+    0,
   );
 
   return (
     <>
-      <div
-        className="fixed inset-0 bg-black/50 z-40"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose} />
 
       <div
         className="
@@ -48,9 +42,7 @@ export default function CartDrawer({
         "
       >
         <div className="p-5 border-b flex items-center justify-between">
-          <h2 className="font-semibold text-xl">
-            Shopping Cart
-          </h2>
+          <h2 className="font-semibold text-xl">Shopping Cart</h2>
 
           <button onClick={onClose}>
             <X />
@@ -58,21 +50,14 @@ export default function CartDrawer({
         </div>
 
         <div className="flex-1 overflow-y-auto p-5">
-          {isLoading && (
-            <p>Loading...</p>
-          )}
+          {isLoading && <p>Loading...</p>}
 
           {cart.length === 0 && (
-            <div className="text-center mt-20">
-              Cart is empty
-            </div>
+            <div className="text-center mt-20">Cart is empty</div>
           )}
 
           {cart.map((item) => (
-            <div
-              key={item.id}
-              className="flex gap-4 border-b py-4"
-            >
+            <div key={item.id} className="flex gap-4 border-b py-4">
               <img
                 src={item.products.image}
                 alt=""
@@ -80,20 +65,12 @@ export default function CartDrawer({
               />
 
               <div className="flex-1">
-                <h3 className="font-medium">
-                  {item.products.product_title}
-                </h3>
+                <h3 className="font-medium">{item.products.product_title}</h3>
 
-                <p className="text-sm text-gray-500">
-                  Qty: {item.quantity}
-                </p>
+                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
               </div>
 
-              <button
-                onClick={() =>
-                  removeItem(item.id)
-                }
-              >
+              <button onClick={() => removeItem(item.id)}>
                 <Trash2 size={18} />
               </button>
             </div>
@@ -101,8 +78,14 @@ export default function CartDrawer({
         </div>
 
         <div className="border-t p-5">
-          <div className="mb-4">
-            Items: {totalItems}
+          <div className="flex justify-between mb-2">
+            <span>Items</span>
+            <span>{totalItems}</span>
+          </div>
+
+          <div className="flex justify-between mb-4">
+            <span>Total</span>
+            <span>${totalPrice.toFixed(2)}</span>
           </div>
 
           <Link

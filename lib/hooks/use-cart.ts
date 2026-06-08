@@ -14,6 +14,7 @@ export type CartItem = {
     product_title: string;
     description: string;
     image: string;
+    price: number;
   };
 };
 

@@ -1,17 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import CartDrawer from "./modals/CartModal";
+import { usePathname } from "next/navigation";
 
 type Props = {
   cartCount: number;
 };
 
-export default function CartButton({
-  cartCount,
-}: Props) {
+export default function CartButton({ cartCount }: Props) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <>
@@ -28,10 +32,7 @@ export default function CartButton({
         )}
       </button>
 
-      <CartDrawer
-        open={open}
-        onClose={() => setOpen(false)}
-      />
+      <CartDrawer open={open} onClose={() => setOpen(false)} />
     </>
   );
 }
