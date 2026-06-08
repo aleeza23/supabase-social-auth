@@ -13,6 +13,7 @@ import {
   Settings,
   Users,
   Package2,
+  Package2Icon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -27,6 +28,11 @@ const navItems = [
     label: "Categories",
     href: "/admin/categories",
     icon: Package2,
+  },
+  {
+    label: "Orders",
+    href: "/admin/orders",
+    icon: Package2Icon,
   },
   {
     label: "Settings",
@@ -55,8 +61,10 @@ export default function AdminSidebar() {
             <span className="text-black font-black text-sm">A</span>
           </div>
           <div>
-            <p className="text-white font-bold text-sm leading-none"
-              style={{ fontFamily: "'Playfair Display', serif" }}>
+            <p
+              className="text-white font-bold text-sm leading-none"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
               Admin
             </p>
             <p className="text-white/30 text-xs mt-0.5">Control Panel</p>
@@ -77,9 +85,10 @@ export default function AdminSidebar() {
               href={href}
               onClick={() => setOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group relative
-                ${active
-                  ? "bg-amber-400/10 text-amber-400"
-                  : "text-white/40 hover:text-white hover:bg-white/[0.04]"
+                ${
+                  active
+                    ? "bg-amber-400/10 text-amber-400"
+                    : "text-white/40 hover:text-white hover:bg-white/[0.04]"
                 }`}
             >
               <Icon size={16} strokeWidth={active ? 2.5 : 1.5} />
@@ -122,8 +131,10 @@ export default function AdminSidebar() {
           <div className="w-7 h-7 rounded-lg bg-amber-400 flex items-center justify-center">
             <span className="text-black font-black text-xs">A</span>
           </div>
-          <span className="text-white font-bold text-sm"
-            style={{ fontFamily: "'Playfair Display', serif" }}>
+          <span
+            className="text-white font-bold text-sm"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
             Admin
           </span>
         </div>
@@ -150,8 +161,10 @@ export default function AdminSidebar() {
                 <div className="w-7 h-7 rounded-lg bg-amber-400 flex items-center justify-center">
                   <span className="text-black font-black text-xs">A</span>
                 </div>
-                <span className="text-white font-bold text-sm"
-                  style={{ fontFamily: "'Playfair Display', serif" }}>
+                <span
+                  className="text-white font-bold text-sm"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
                   Admin
                 </span>
               </div>

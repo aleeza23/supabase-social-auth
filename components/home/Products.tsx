@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import ProductCard, { type Product } from "@/components/ui/product-card";
 import { useProducts, useDeleteProduct } from "@/lib/hooks/use-products";
 import ProductFormModal from "../modals/ProductFormModal";
-import { useAddToCart } from "@/lib/hooks/use-cart";
 
 export default function ProductsView() {
   const { data: products, isLoading, isError } = useProducts();

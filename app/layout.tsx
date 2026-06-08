@@ -32,15 +32,16 @@ export default function RootLayout({
         className={`${geistSans.className} antialiased`}
         suppressHydrationWarning
       >
-        <Navbar />
-
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
